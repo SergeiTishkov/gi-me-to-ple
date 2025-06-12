@@ -1,0 +1,30 @@
+version: '3.8'
+
+services:
+  mongo:
+    image: 'mongo:latest'
+    container_name: my-standalone-mongo
+    ports:
+      - '27017:27017' # Exposes Mongo on the default port to your host machine
+    volumes:
+      - 'mongo-data:/data/db' # Persists database data on your host machine
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=myuser
+      - MONGO_INITDB_ROOT_PASSWORD=mypassword
+
+  mongo-express:
+    image: 'mongo-express:latest'
+    container_name: my-mongo-express
+    ports:
+      - '8081:8081'
+    environment:
+      - ME_CONFIG_MONGODB_SERVER=mongo
+      - ME_CONFIG_MONGODB_ADMINUSERNAME=myuser
+      - ME_CONFIG_MONGODB_ADMINPASSWORD=mypassword
+      - ME_CONFIG_MONGODB_AUTH_DATABASE=admin
+    depends_on:
+      - mongo # Ensures the mongo container starts before mongo-express
+
+volumes:
+  mongo-data:
+    driver: local
