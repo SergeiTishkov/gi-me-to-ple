@@ -1,4 +1,4 @@
-import { ClientHomePage } from "./homePage";
+import { HomePage } from "./homePage";
 import { CrowdfundingRequest } from "@gi-me-to-ple/shared/types/CrowdfundingRequest";
 
 const API_BASE_URL: string = process.env.NEXT_PUBLIC_API_URL || '';
@@ -19,5 +19,5 @@ async function getRequests(): Promise<CrowdfundingRequest[]> {
 export default async function HomePageRenderWrapper() {
   const requests = await getRequests();
 
-  return <ClientHomePage requests={requests}></ClientHomePage>
+  return <HomePage requests={requests}></HomePage>
 }
