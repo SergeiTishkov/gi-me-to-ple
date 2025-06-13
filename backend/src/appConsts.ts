@@ -1,0 +1,1 @@
+export const CROWDFUNDING_REQUESTS_COLLECTION_NAME = "crowdfunding_requests"
