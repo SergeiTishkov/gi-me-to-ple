@@ -12,7 +12,7 @@ export function HomePage({ requests }: HomePageProps) {
   const [menuOpen, setMenuOpen] = useState(false);
 
   return (
-    <div className="bg-blue-950 text-white min-h-screen p-4">
+    <>
       {/* Header */}
       <header className="flex items-center justify-between mb-6">
         <button onClick={() => setMenuOpen(!menuOpen)}>
@@ -46,6 +46,6 @@ export function HomePage({ requests }: HomePageProps) {
 
         {requests.length === 0 && <p className="text-center text-blue-300">Loading requests...</p>}
       </main>
-    </div>
+    </>
   );
 }
