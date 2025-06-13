@@ -7,6 +7,7 @@ esbuild.build({
   target: ['node18'],
   outfile: 'dist/index.js',
   alias: {
+    '@src': './src',
     '@utils': './src/utils',
   },
 }).catch(() => process.exit(1));
