@@ -5,7 +5,8 @@
       "@utils/*": ["utils/*"]
     },
     "outDir": "dist",
-    "module": "ESNext",
+    "module": "nodenext",
+    "moduleResolution": "nodenext",
     "target": "ES2020",
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true
