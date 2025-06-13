@@ -8,7 +8,7 @@ type HomePageProps = {
   requests: CrowdfundingRequest[];
 };
 
-export function HomePage({ requests }: HomePageProps) {
+export function ClientHomePage({ requests }: HomePageProps) {
   const [menuOpen, setMenuOpen] = useState(false);
 
   return (
