@@ -1,4 +1,4 @@
-import { HomePage } from "./HomePage";
+import { HomePage } from "./Temp";
 import { CrowdfundingRequest } from "@gi-me-to-ple/shared/types/CrowdfundingRequest";
 
 const API_BASE_URL: string = process.env.NEXT_PUBLIC_API_URL || '';
