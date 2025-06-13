@@ -8,6 +8,5 @@ esbuild.build({
   outfile: 'dist/index.js',
   alias: {
     '@src': './src',
-    '@utils': './src/utils',
   },
 }).catch(() => process.exit(1));

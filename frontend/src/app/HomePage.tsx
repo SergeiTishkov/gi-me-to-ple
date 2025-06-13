@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { Menu, Search } from "lucide-react";
-import { CrowdfundingRequest } from "@/types/CrowdfundingRequest";
+import { CrowdfundingRequest } from "@gi-me-to-ple/shared/types/CrowdfundingRequest";
 
 type HomePageProps = {
   requests: CrowdfundingRequest[]

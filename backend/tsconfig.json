@@ -1,9 +1,8 @@
 {
   "compilerOptions": {
-    "baseUrl": "src",
     "paths": {
-      "@src/*": ["*"],
-      "@utils/*": ["utils/*"]
+      "@/*": ["./src/*"],
+      "@gi-me-to-ple/shared/*": ["../shared/src/*"]
     },
     "outDir": "dist",
     "module": "nodenext",

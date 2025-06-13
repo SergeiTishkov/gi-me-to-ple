@@ -1,7 +1,8 @@
 import express from "express";
 import cors from "cors";
-import { crowdfundingDbClient } from "@src/dbClient";
-import { CROWDFUNDING_REQUESTS_COLLECTION_NAME } from "@src/appConsts";
+import { crowdfundingDbClient } from "@/dbClient";
+import { CROWDFUNDING_REQUESTS_COLLECTION_NAME } from "@/appConsts";
+import { CrowdfundingRequest } from "@gi-me-to-ple/shared/types/CrowdfundingRequest";
 
 const app = express();
 app.use(cors());

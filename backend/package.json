@@ -1,5 +1,5 @@
 {
-  "name": "backend",
+  "name": "@gi-me-to-ple/backend",
   "version": "1.0.0",
   "description": "A Node.js backend project bundled with esbuild",
   "main": "dist/index.js",
@@ -21,6 +21,7 @@
   "dependencies": {
     "cors": "^2.8.5",
     "express": "^5.1.0",
+    "@gi-me-to-ple/shared": "file:../shared",
     "mongodb": "^6.17.0"
   }
 }
