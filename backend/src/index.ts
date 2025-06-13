@@ -1,4 +1,3 @@
-// index.ts (CommonJS compatible)
 import express from "express";
 import cors from "cors";
 import { crowdfundingDbClient } from "@src/dbClient";
