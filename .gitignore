@@ -58,6 +58,7 @@ web_modules/
 
 # Optional stylelint cache
 .stylelintcache
+.github/copilot-instructions.md
 
 # Microbundle cache
 .rpt2_cache/
