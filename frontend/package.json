@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@gi-me-to-ple/shared": "file:../shared",
+    "ethers": "^6.15.0",
     "lucide-react": "^0.514.0",
     "next": "15.3.3",
     "react": "^19.0.0",

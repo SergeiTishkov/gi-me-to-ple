@@ -1,137 +1,122 @@
-'use client'
+"use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { User } from "@gi-me-to-ple/shared/types/User";
 import { Header } from "@/components/header";
-import { KeyRound, User, Mail } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { ethers } from "ethers";
+import { Wallet } from "lucide-react";
 
-type AuthMode = 'login' | 'register';
+const API_BASE_URL: string = process.env.NEXT_PUBLIC_API_URL || "";
 
 export default function LoginPage() {
-  const [authMode, setAuthMode] = useState<AuthMode>('login');
-  
-  // State for all form fields
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
+  const router = useRouter();
+  const [account, setAccount] = useState<string | null>(null);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [message, setMessage] = useState<string>("");
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (authMode === 'login') {
-      // TODO: Add your authentication logic here
-      console.log("Logging in with:", { email, password });
-    } else {
-      // TODO: Add your registration logic here
-      if (password !== confirmPassword) {
-        alert("Passwords do not match!");
-        return;
+  useEffect(() => {
+    const checkLoginStatus = async () => {
+      try {
+        const res = await fetch(`${API_BASE_URL}/api/auth/me`, { credentials: "include" });
+        if (res.ok) {
+          const user: User = await res.json();
+          setAccount(user.address);
+        }
+      } catch (error) {
+        console.error("Could not check login status:", error);
       }
-      console.log("Registering with:", { name, email, password });
+    };
+    checkLoginStatus();
+  }, []);
+
+  const handleLogin = async () => {
+    setLoading(true);
+    setMessage("");
+
+    if (!window.ethereum) {
+      setMessage("Please install MetaMask to continue.");
+      setLoading(false);
+      return;
+    }
+
+    try {
+      const provider = new ethers.BrowserProvider(window.ethereum);
+
+      await provider.send("eth_requestAccounts", []);
+      const signer = await provider.getSigner();
+      const userAddress = await signer.getAddress();
+
+      setMessage("Fetching challenge...");
+      const nonceRes = await fetch(`${API_BASE_URL}/api/auth/nonce?address=${userAddress}`, { credentials: "include" });
+      if (!nonceRes.ok) {
+        const errorData = await nonceRes.json();
+        throw new Error(errorData.message || "Failed to get nonce from server.");
+      }
+      const { nonce } = await nonceRes.json();
+
+      setMessage("Please sign the message in MetaMask...");
+      const signature = await signer.signMessage(nonce);
+
+      setMessage("Verifying signature...");
+      const verifyRes = await fetch(`${API_BASE_URL}/api/auth/verify`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ address: userAddress, signature }),
+        credentials: "include",
+      });
+
+      if (verifyRes.ok) {
+        setMessage("Login successful! Redirecting...");
+        setAccount(userAddress);
+        router.push("/");
+      } else {
+        const errorData = await verifyRes.json();
+        throw new Error(errorData.message || "Verification failed.");
+      }
+    } catch (error: any) {
+      console.error("Login failed:", error);
+      // Check for user rejection error
+      if (error.code === 4001) {
+        setMessage("You rejected the request in MetaMask.");
+      } else {
+        setMessage(error.message || "An unknown error occurred.");
+      }
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
     <>
       <Header />
-
       <main className="flex flex-col items-center justify-center pt-8">
-        <div className="bg-blue-800 rounded-xl p-8 shadow-lg w-full max-w-md">
-          {/* --- Auth Mode Toggle --- */}
-          <div className="flex justify-center border-b border-blue-700 mb-6">
-            <button
-              onClick={() => setAuthMode('login')}
-              className={`w-1/2 py-3 font-semibold transition-colors duration-200 ${
-                authMode === 'login' 
-                  ? 'border-b-2 border-blue-400 text-white' 
-                  : 'text-blue-300 hover:text-white'
-              }`}
-            >
-              Login
-            </button>
-            <button
-              onClick={() => setAuthMode('register')}
-              className={`w-1/2 py-3 font-semibold transition-colors duration-200 ${
-                authMode === 'register' 
-                  ? 'border-b-2 border-blue-400 text-white' 
-                  : 'text-blue-300 hover:text-white'
-              }`}
-            >
-              Register
-            </button>
-          </div>
+        <div className="bg-blue-800 rounded-xl p-8 shadow-lg w-full max-w-md text-white">
+          <h2 className="text-2xl font-semibold text-center mb-4">Join Gi-Me-To-Ple!!!</h2>
+          <p className="text-center text-blue-300 mb-6">
+            Connect your wallet to sign in and start your crowdfunding journey.
+          </p>
 
-          <h2 className="text-2xl font-semibold text-center mb-6">
-            {authMode === 'login' ? 'Welcome Back' : 'Create an Account'}
-          </h2>
-          
-          <form onSubmit={handleSubmit} className="space-y-5">
-            {/* --- Name Input (Register Only) --- */}
-            {authMode === 'register' && (
-              <div className="space-y-2">
-                <label htmlFor="name" className="text-sm font-medium text-blue-300">Full Name</label>
-                <div className="relative">
-                  <User className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-blue-400" />
-                  <input
-                    type="text" id="name" value={name} onChange={(e) => setName(e.target.value)}
-                    placeholder="John Doe"
-                    className="bg-blue-900 border border-blue-700 rounded-md w-full pl-10 pr-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    required
-                  />
-                </div>
-              </div>
-            )}
-
-            {/* --- Email Input --- */}
-            <div className="space-y-2">
-              <label htmlFor="email" className="text-sm font-medium text-blue-300">Email</label>
-              <div className="relative">
-                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-blue-400" />
-                <input
-                  type="email" id="email" value={email} onChange={(e) => setEmail(e.target.value)}
-                  placeholder="you@example.com"
-                  className="bg-blue-900 border border-blue-700 rounded-md w-full pl-10 pr-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  required
-                />
-              </div>
+          {account ? (
+            <div className="text-center bg-blue-900 p-4 rounded-lg">
+              <p className="font-semibold">Connected As:</p>
+              <p className="text-sm text-blue-300 break-all">{account}</p>
             </div>
-
-            {/* --- Password Input --- */}
-            <div className="space-y-2">
-              <label htmlFor="password" className="text-sm font-medium text-blue-300">Password</label>
-              <div className="relative">
-                <KeyRound className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-blue-400" />
-                <input
-                  type="password" id="password" value={password} onChange={(e) => setPassword(e.target.value)}
-                  placeholder="••••••••"
-                  className="bg-blue-900 border border-blue-700 rounded-md w-full pl-10 pr-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  required
-                />
-              </div>
+          ) : (
+            <div className="space-y-4">
+              <button
+                onClick={handleLogin}
+                disabled={loading}
+                className="w-full bg-blue-700 flex items-center justify-center gap-3 px-4 py-3 rounded-md hover:bg-blue-600 font-semibold tracking-wide transition-colors duration-200 disabled:bg-blue-900 disabled:cursor-not-allowed"
+              >
+                <Wallet className="w-6 h-6" />
+                <span>{loading ? message : "Connect Wallet & Sign In"}</span>
+              </button>
+              {message && !loading && (
+                <p className="text-center text-sm text-yellow-300 bg-yellow-900/30 p-2 rounded-md">{message}</p>
+              )}
             </div>
-
-            {/* --- Confirm Password Input (Register Only) --- */}
-            {authMode === 'register' && (
-              <div className="space-y-2">
-                <label htmlFor="confirmPassword" className="text-sm font-medium text-blue-300">Confirm Password</label>
-                <div className="relative">
-                  <KeyRound className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-blue-400" />
-                  <input
-                    type="password" id="confirmPassword" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)}
-                    placeholder="••••••••"
-                    className="bg-blue-900 border border-blue-700 rounded-md w-full pl-10 pr-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    required
-                  />
-                </div>
-              </div>
-            )}
-
-            <button
-              type="submit"
-              className="w-full bg-blue-700 mt-4 px-4 py-3 rounded-md hover:bg-blue-600 font-semibold tracking-wide transition-colors duration-200"
-            >
-              {authMode === 'login' ? 'Login' : 'Create Account'}
-            </button>
-          </form>
+          )}
         </div>
       </main>
     </>
