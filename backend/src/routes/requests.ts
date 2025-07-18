@@ -8,7 +8,7 @@ const router = Router();
 router.get("/", async (req, res) => {
   try {
     const requests = await crowdfundingDbClient
-      .collection(CROWDFUNDING_REQUESTS_COLLECTION_NAME)
+      .collection<CrowdfundingRequest>(CROWDFUNDING_REQUESTS_COLLECTION_NAME)
       .find({})
       .toArray();
     res.json(requests);
