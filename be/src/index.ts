@@ -3,7 +3,7 @@ dotenv.config();
 import express from "express";
 import cors from "cors";
 import session from "express-session";
-import requestsRouter from "./routes/requests";
+import campaignsRouter from "./routes/campaigns";
 import authRouter from "./routes/auth";
 
 const app = express();
@@ -22,7 +22,7 @@ app.use(session({
 
 const PORT = process.env.OWN_PORT || 43210;
 
-app.use("/api/requests", requestsRouter);
+app.use("/api/campaigns", campaignsRouter);
 app.use("/api/auth", authRouter);
 
 app.listen(PORT, () => {

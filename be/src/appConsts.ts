@@ -1,1 +1,1 @@
-export const CROWDFUNDING_REQUESTS_COLLECTION_NAME = "crowdfunding_requests"
+export const CROWDFUNDING_CAMPAIGNS_COLLECTION_NAME = "crowdfunding_campaigns";

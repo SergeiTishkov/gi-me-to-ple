@@ -1,2 +1,2 @@
-GET http://localhost:43210/api/requests
+GET http://localhost:43210/api/campaigns
 
