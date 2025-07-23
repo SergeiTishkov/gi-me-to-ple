@@ -1,8 +1,11 @@
+
+import { ensureEnvLoaded } from "./ensureEnv";
+ensureEnvLoaded();
+
 import { MongoClient, Db } from "mongodb";
+import { CROWDFUNDING_DB_NAME } from "./appConsts";
 
-const uri = process.env.MONGODB_URI || "mongodb://myuser:mypassword@localhost:27017/admin";
-const dbName = "crowdfunding_db";
-
+const uri = `${process.env.MONGODB_URI}/admin`;
 export let mongoClient: MongoClient;
 export let crowdfundingDbClient: Db;
 
@@ -13,9 +16,9 @@ async function connectToDatabase(): Promise<void> {
 
     console.log("✅ Successfully connected to MongoDB.");
 
-    crowdfundingDbClient = mongoClient.db(dbName);
+    crowdfundingDbClient = mongoClient.db(CROWDFUNDING_DB_NAME);
   } catch (err) {
-    console.error("❌ Failed to connect to MongoDB. Server not starting.", err);
+    console.error(`❌ Failed to connect to MongoDB. Server not starting. URI: "${uri}"`, err);
     process.exit(1);
   }
 }

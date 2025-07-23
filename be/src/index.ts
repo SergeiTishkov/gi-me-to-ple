@@ -1,18 +1,26 @@
-import dotenv from "dotenv";
-dotenv.config();
+import { ensureEnvLoaded } from "./ensureEnv";
+ensureEnvLoaded();
+
 import express from "express";
 import cors from "cors";
 import session from "express-session";
+import MongoStore from "connect-mongo";
 import campaignsRouter from "./routes/campaigns";
 import authRouter from "./routes/auth";
+import { CROWDFUNDING_DB_NAME, SESSIONS_COLLECTION_NAME } from "./appConsts";
 
 const app = express();
 app.use(cors({ origin: `http://localhost:${process.env.FRONTEND_PORT}`, credentials: true }));
 app.use(express.json());
 app.use(session({
-  secret: "your-secret-key", // change to a strong secret in production
+  secret: process.env.SESSION_SECRET,
   resave: false,
   saveUninitialized: false,
+  store: MongoStore.create({
+    mongoUrl: `${process.env.MONGODB_URI}/admin`,
+    dbName : CROWDFUNDING_DB_NAME,
+    collectionName: SESSIONS_COLLECTION_NAME
+  }),
   cookie: {
     httpOnly: true,
     secure: false, // set to true if using HTTPS
