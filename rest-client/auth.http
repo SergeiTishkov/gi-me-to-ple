@@ -1,8 +1,8 @@
-GET http://localhost:3000/api/auth/nonce?address=0x123
+GET http://localhost:43210/api/auth/nonce?address=0x123
 
 ###
-POST http://localhost:3000/api/auth/verify
+POST http://localhost:43210/api/auth/verify
 
 ###
 
-GET http://localhost:3000/api/auth/me
+GET http://localhost:43210/api/auth/me
